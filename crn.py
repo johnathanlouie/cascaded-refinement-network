@@ -7,7 +7,7 @@ from keras.optimizers import Adam
 from keras.applications.vgg19 import VGG19
 from keras.layers.advanced_activations import LeakyReLU
 import cv2
-import numpy as n
+import numpy
 
 def create_crn():
     minput = Input(shape=(1024, 2048, 1), name="crn_input")
@@ -147,7 +147,7 @@ def load_data(loc, start, end):
     inputNames = sorted(os.listdir(loc))[start:end]
     ndata = len(inputNames)
     ishape = (ndata, 1024, 2048, 1)
-    data = n.ndarray(shape=ishape, dtype=n.uint8)
+    data = numpy.ndarray(shape=ishape, dtype=numpy.uint8)
     for i in range(ndata):
         data[i] = cv2.imread(loc + "/" + inputNames[i], cv2.IMREAD_GRAYSCALE).reshape((1024, 2048, 1))
     return data
@@ -156,12 +156,12 @@ def load_labels(loc, start, end):
     outputNames = sorted(os.listdir(loc))[start:end]
     ndata = len(outputNames)
     oshape = (ndata, 1024, 2048, 3)
-    labels = n.ndarray(shape=oshape, dtype=n.uint8)
+    labels = numpy.ndarray(shape=oshape, dtype=numpy.uint8)
     for i in range(ndata):
         labels[i] = cv2.imread(loc + "/" + outputNames[i], cv2.IMREAD_COLOR).reshape((1024, 2048, 3))
     return labels
 
-def main():
+def proc_args():
     parser = argparse.ArgumentParser(description="Cascaded Refinement Networks for photorealistic image synthesis.")
     subparsers = parser.add_subparsers(dest="subparser")
     subparser1 = subparsers.add_parser("train", help="Train the model using semantic layouts as input and ground truth images as output.")
@@ -172,8 +172,6 @@ def main():
     subparser1.add_argument("truth", help="Directory in which the ground truth images are stored.")
     subparser1.add_argument("-b", "--batchsize", help="Number of samples per gradient update.", type=int, default=5)
     subparser1.add_argument("-e", "--epochs", help="Number of epochs to train the model. An epoch is an iteration over the entire x and y data provided.", type=int, default=1)
-    subparser1.add_argument("-a", "--first", help="Starting index of the subset of the dataset.", type=int, default=0)
-    subparser1.add_argument("-z", "--last", help="Last index of the subset of the dataset.", type=int, default=-1)
     subparser2 = subparsers.add_parser("generate", help="Synthesize images using semantic layouts as input.")
     subparser2.add_argument("load", help="Load the model from this file.")
     subparser2.add_argument("semantic", help="Directory in which the semantic layouts are stored.")
@@ -184,28 +182,44 @@ def main():
     subparser4 = subparsers.add_parser("prepvgg", help="Prepare VGG19 for use.")
     subparser4.add_argument("save", help="Save VGG19 to this file.")
     args = parser.parse_args()
+    return args
 
+def main():
+    args = proc_args()
     if args.subparser == "train":
+        batch_file = "batch"
+        epoch_file = "epoch"
+        b = 0
+        if os.path.isfile(batch_file):
+            file1  = open(batch_file, "r")
+            b = int(file1.read())
+            file1.close()
+        e = 0
+        if os.path.isfile(epoch_file):
+            file2  = open(epoch_file, "r")
+            e = int(file2.read())
+            file2.close()
         training_model = load_model(args.load)
         vgg = load_model(args.vgg)
         data_size = size_data(args.semantic)
-        for e in range(args.epochs):
-            print("==================epoch %d==================" % (e))
-            for b in range(0, data_size, args.batchsize):
+        while args.epochs > e:
+            while b < data_size:
                 b2 = b + args.batchsize
-                print("batch %d-%d" % (b, b2))
-                print("loading x")
                 data = load_data(args.semantic, b, b2)
-                print("loading y")
                 raw_labels = load_labels(args.truth, b, b2)
-                print("labeling")
                 labels = vgg.predict(raw_labels)
-                print("training")
                 training_model.train_on_batch(x=data, y=labels)
-                print("saving")
                 training_model.save(args.save)
-                print("end of batch")
-            print("end of epoch")
+                file1  = open(batch_file, "w")
+                file1.write(str(b2))
+                file1.flush()
+                file1.close()
+                b = b2
+            e += 1
+            file2  = open(epoch_file, "w")
+            file2.write(str(e))
+            file2.flush()
+            file2.close()
     elif args.subparser == "generate":
         testing_model = create_testing_model(load_model(args.load))
         result = testing_model.predict(load_data(args.semantic))
