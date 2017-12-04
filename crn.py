@@ -1,6 +1,6 @@
 import os
 import argparse
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
 from keras.models import Model, load_model
 from keras.layers import Conv2D, BatchNormalization, UpSampling2D, MaxPooling2D, concatenate, Input
 from keras.optimizers import Adam
@@ -10,7 +10,7 @@ import cv2
 import numpy as n
 
 def create_crn():
-    minput = Input(shape=(1024, 2048, 1))
+    minput = Input(shape=(1024, 2048, 1), name="crn_input")
     L8 = minput
     L7 = MaxPooling2D(pool_size=2, strides=2, name="mod7_pool")(L8)
     L6 = MaxPooling2D(pool_size=2, strides=2, name="mod6_pool")(L7)
@@ -23,96 +23,96 @@ def create_crn():
     # module 0
     x = L0
     x = Conv2D(filters=1024, kernel_size=3, padding="same", name="mod0_conv1")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod0_lrelu1")(x)
+    x = BatchNormalization(name="mod0_norm1")(x)
     x = Conv2D(filters=1024, kernel_size=3, padding="same", name="mod0_conv2")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod0_lrelu2")(x)
+    x = BatchNormalization(name="mod0_norm2")(x)
     # module 1
     x = UpSampling2D(size=2)(x)
     x = concatenate([x, L1])
     x = Conv2D(filters=1024, kernel_size=3, padding="same", name="mod1_conv1")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod1_lrelu1")(x)
+    x = BatchNormalization(name="mod1_norm1")(x)
     x = Conv2D(filters=1024, kernel_size=3, padding="same", name="mod1_conv2")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod1_lrelu2")(x)
+    x = BatchNormalization(name="mod1_norm2")(x)
     # module 2
     x = UpSampling2D(size=2)(x)
     x = concatenate([x, L2])
     x = Conv2D(filters=1024, kernel_size=3, padding="same", name="mod2_conv1")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod2_lrelu1")(x)
+    x = BatchNormalization(name="mod2_norm1")(x)
     x = Conv2D(filters=1024, kernel_size=3, padding="same", name="mod2_conv2")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod2_lrelu2")(x)
+    x = BatchNormalization(name="mod2_norm2")(x)
     # module 3
     x = UpSampling2D(size=2)(x)
     x = concatenate([x, L3])
     x = Conv2D(filters=1024, kernel_size=3, padding="same", name="mod3_conv1")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod3_lrelu1")(x)
+    x = BatchNormalization(name="mod3_norm1")(x)
     x = Conv2D(filters=1024, kernel_size=3, padding="same", name="mod3_conv2")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod3_lrelu2")(x)
+    x = BatchNormalization(name="mod3_norm2")(x)
     # module 4
     x = UpSampling2D(size=2)(x)
     x = concatenate([x, L4])
     x = Conv2D(filters=1024, kernel_size=3, padding="same", name="mod4_conv1")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod4_lrelu1")(x)
+    x = BatchNormalization(name="mod4_norm1")(x)
     x = Conv2D(filters=1024, kernel_size=3, padding="same", name="mod4_conv2")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod4_lrelu2")(x)
+    x = BatchNormalization(name="mod4_norm2")(x)
     # module 5
     x = UpSampling2D(size=2)(x)
     x = concatenate([x, L5])
     x = Conv2D(filters=512, kernel_size=3, padding="same", name="mod5_conv1")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod5_lrelu1")(x)
+    x = BatchNormalization(name="mod5_norm1")(x)
     x = Conv2D(filters=512, kernel_size=3, padding="same", name="mod5_conv2")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod5_lrelu2")(x)
+    x = BatchNormalization(name="mod5_norm2")(x)
     # module 6
     x = UpSampling2D(size=2)(x)
     x = concatenate([x, L6])
     x = Conv2D(filters=512, kernel_size=3, padding="same", name="mod6_conv1")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod6_lrelu1")(x)
+    x = BatchNormalization(name="mod6_norm1")(x)
     x = Conv2D(filters=512, kernel_size=3, padding="same", name="mod6_conv2")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod6_lrelu2")(x)
+    x = BatchNormalization(name="mod6_norm2")(x)
     # module 7
     x = UpSampling2D(size=2)(x)
     x = concatenate([x, L7])
     x = Conv2D(filters=128, kernel_size=3, padding="same", name="mod7_conv1")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod7_lrelu1")(x)
+    x = BatchNormalization(name="mod7_norm1")(x)
     x = Conv2D(filters=128, kernel_size=3, padding="same", name="mod7_conv2")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod7_lrelu2")(x)
+    x = BatchNormalization(name="mod7_norm2")(x)
     # module 8
     x = UpSampling2D(size=2)(x)
     x = concatenate([x, L8])
     x = Conv2D(filters=32, kernel_size=3, padding="same", name="mod8_conv1")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
+    x = LeakyReLU(alpha=0.2, name="mod8_lrelu1")(x)
+    x = BatchNormalization(name="mod8_norm1")(x)
     x = Conv2D(filters=32, kernel_size=3, padding="same", name="mod8_conv2")(x)
-    x = LeakyReLU(alpha=0.2)(x)
-    x = BatchNormalization()(x)
-    moutput = Conv2D(filters=3, kernel_size=1, activation=None)(x)
+    x = LeakyReLU(alpha=0.2, name="mod8_lrelu2")(x)
+    x = BatchNormalization(name="mod8_norm2")(x)
+    moutput = Conv2D(filters=3, kernel_size=1, activation=None, name="crn_output")(x)
     model = Model(inputs=minput, outputs=moutput)
     return model
 
 def create_vgg():
-    vgg = VGG19(include_top=False, weights='imagenet', input_shape=(1024, 2048, 3))
+    vgg = VGG19(include_top=False, weights="imagenet", input_shape=(1024, 2048, 3))
     vgg2 = Model(inputs=vgg.input, outputs=[
             vgg.input,
-            vgg.get_layer('block1_conv2').output,
-            vgg.get_layer('block2_conv2').output,
-            vgg.get_layer('block3_conv2').output,
-            vgg.get_layer('block4_conv2').output,
-            vgg.get_layer('block5_conv2').output
+            vgg.get_layer("block1_conv2").output,
+            vgg.get_layer("block2_conv2").output,
+            vgg.get_layer("block3_conv2").output,
+            vgg.get_layer("block4_conv2").output,
+            vgg.get_layer("block5_conv2").output
             ])
     vgg2.trainable = False;
     for l in vgg2.layers:
@@ -136,69 +136,87 @@ def create_training_model(crn, vgg):
     )
     return model
 
-def load_data(loc):
+def create_testing_model(model):
+    return Model(inputs=model.input, outputs=model.get_layer("crn_output").output)
+
+def size_data(loc):
     inputNames = sorted(os.listdir(loc))
+    return len(inputNames)
+
+def load_data(loc, start, end):
+    inputNames = sorted(os.listdir(loc))[start:end]
     ndata = len(inputNames)
     ishape = (ndata, 1024, 2048, 1)
     data = n.ndarray(shape=ishape, dtype=n.uint8)
     for i in range(ndata):
-        data[i] = cv2.imread(loc + '/' + inputNames[i], 0).reshape((1024, 2048, 1))
+        data[i] = cv2.imread(loc + "/" + inputNames[i], cv2.IMREAD_GRAYSCALE).reshape((1024, 2048, 1))
     return data
 
-def load_labels(loc):
-    outputNames = sorted(os.listdir(loc))
+def load_labels(loc, start, end):
+    outputNames = sorted(os.listdir(loc))[start:end]
     ndata = len(outputNames)
     oshape = (ndata, 1024, 2048, 3)
     labels = n.ndarray(shape=oshape, dtype=n.uint8)
     for i in range(ndata):
-        labels[i] = cv2.imread(loc + '/' + outputNames[i], 1).reshape((1024, 2048, 3))
+        labels[i] = cv2.imread(loc + "/" + outputNames[i], cv2.IMREAD_COLOR).reshape((1024, 2048, 3))
     return labels
 
 def main():
     parser = argparse.ArgumentParser(description="Cascaded Refinement Networks for photorealistic image synthesis.")
-    parser.add_argument("-l", "--load", help="Load the model from this file.")
-    parser.add_argument("-s", "--save", help="Save the model with architecture, weights, training configuration, and optimization state to this file.")
     subparsers = parser.add_subparsers(dest="subparser")
-    subparser1 = subparsers.add_parser('train', help='Train the model using semantic layouts as input and ground truth images as output.')
-    subparser1.add_argument("layouts", help="Directory in which the semantic layouts are stored.")
-    subparser1.add_argument("images", help="Directory in which the ground truth images are stored.")
-    subparser1.add_argument("-v", "--vgg", help="Load VGG19 from this file.")
-    subparser1.add_argument("-c", "--create", help="Save VGG19 to this file.")
-    subparser1.add_argument("-b", "--batch", help="Number of samples per gradient update.", type=int, default=None)
-    subparser1.add_argument("-e", "--epoch", help="Number of epochs to train the model. An epoch is an iteration over the entire x and y data provided.", type=int, default=1)
-    subparser2 = subparsers.add_parser('generate', help='Synthesize images using semantic layouts as input.')
-    subparser2.add_argument("layouts", help="Directory in which the semantic layouts are stored.")
-    subparser2.add_argument("outputs", help="Directory to which the synthesized images are written.")
+    subparser1 = subparsers.add_parser("train", help="Train the model using semantic layouts as input and ground truth images as output.")
+    subparser1.add_argument("load", help="Load the model from this file.")
+    subparser1.add_argument("save", help="Save the model with architecture, weights, training configuration, and optimization state to this file.")
+    subparser1.add_argument("vgg", help="Load VGG19 from this file.")
+    subparser1.add_argument("semantic", help="Directory in which the semantic layouts are stored.")
+    subparser1.add_argument("truth", help="Directory in which the ground truth images are stored.")
+    subparser1.add_argument("-b", "--batchsize", help="Number of samples per gradient update.", type=int, default=5)
+    subparser1.add_argument("-e", "--epochs", help="Number of epochs to train the model. An epoch is an iteration over the entire x and y data provided.", type=int, default=1)
+    subparser1.add_argument("-a", "--first", help="Starting index of the subset of the dataset.", type=int, default=0)
+    subparser1.add_argument("-z", "--last", help="Last index of the subset of the dataset.", type=int, default=-1)
+    subparser2 = subparsers.add_parser("generate", help="Synthesize images using semantic layouts as input.")
+    subparser2.add_argument("load", help="Load the model from this file.")
+    subparser2.add_argument("semantic", help="Directory in which the semantic layouts are stored.")
+    subparser2.add_argument("synthesized", help="Directory to which the synthesized images are written.")
+    subparser3 = subparsers.add_parser("prepcrn", help="Prepare CRN for use.")
+    subparser3.add_argument("save", help="Save CRN to this file.")
+    subparser3.add_argument("vgg", help="Load VGG19 from this file.")
+    subparser4 = subparsers.add_parser("prepvgg", help="Prepare VGG19 for use.")
+    subparser4.add_argument("save", help="Save VGG19 to this file.")
     args = parser.parse_args()
 
-    crn = None
-    if args.load == None:
-        crn = create_crn()
-    else:
-        crn = load_model(args.load)
-
     if args.subparser == "train":
-        vgg = None
-        if args.vgg == None:
-            vgg = create_vgg()
-        else:
-            vgg = load_model(args.vgg)
-        if args.create != None:
-            vgg.save(args.create)
-        data = load_data(args.layouts)
-        raw_labels = load_labels(args.images)
-        labels = vgg.predict(raw_labels)
-        training_model = create_training_model(crn, vgg)
-        training_model.fit(x=data, y=labels, batch_size=args.batch, epochs=args.epoch)
+        training_model = load_model(args.load)
+        vgg = load_model(args.vgg)
+        data_size = size_data(args.semantic)
+        for e in range(args.epochs):
+            print("==================epoch %d==================" % (e))
+            for b in range(0, data_size, args.batchsize):
+                b2 = b + args.batchsize
+                print("batch %d-%d" % (b, b2))
+                print("loading x")
+                data = load_data(args.semantic, b, b2)
+                print("loading y")
+                raw_labels = load_labels(args.truth, b, b2)
+                print("labeling")
+                labels = vgg.predict(raw_labels)
+                print("training")
+                training_model.train_on_batch(x=data, y=labels)
+                print("saving")
+                training_model.save(args.save)
+                print("end of batch")
+            print("end of epoch")
     elif args.subparser == "generate":
-        data = load_data(args.layouts)
-        result = crn.predict(data)
+        testing_model = create_testing_model(load_model(args.load))
+        result = testing_model.predict(load_data(args.semantic))
         for i in range(data.shape[0]):
-            cv2.imwrite(args.outputs + '/' + str(i) + '.png', result[i])
+            cv2.imwrite(args.outputs + "/" + str(i) + ".png", result[i])
+    elif args.subparser == "prepcrn":
+        create_training_model(create_crn(), load_model(args.vgg)).save(args.save)
+    elif args.subparser == "prepvgg":
+        create_vgg().save(args.save)
     else:
         print("No commands. Try --help.")
-    if args.save != None:
-        crn.save(args.save)
     return
 
 main()
