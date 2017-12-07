@@ -13,6 +13,7 @@ by Qifeng Chen and Vladlen Koltun. There are some differences between their impl
 
 # Dataset
 Please download the dataset from Cityscape. We used gtFine_trainvaltest (labels) and leftImg8bit_trainvaltest (data).
+
 Link: https://www.cityscapes-dataset.com/downloads/
 
 # Quick Start
