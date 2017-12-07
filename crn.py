@@ -197,10 +197,17 @@ def main():
         vgg = load_model(args.vgg)
         # Get the number of samples in the dataset, so it knows when the epoch will end.
         data_size = size_data(args.semantic)
-        # Count the number of epochs so far.
-        while e < args.epochs:
-            # Count the number of samples processed so far.
-            while b < data_size:
+        # Process a batch of samples for the specified number of epochs before moving onto the next batch. This limits the expensive loading and VGG19 preprocessing.
+        while b < data_size:
+            # Loading only a batch to memory at a time because memory is limited.
+            # Load a batch of semantic layouts.
+            data = load_data(args.semantic, b, b + args.batchsize, height, width, 1)
+            # Load a batch of ground truth images.
+            raw_labels = load_data(args.truth, b, b + args.batchsize, height, width, 3)
+            # Use VGG19 to produce the labels from ground truth images.
+            labels = vgg.predict(raw_labels)
+            # Count the number of epochs so far.
+            while e < args.epochs:
                 # Slurm allocated 48 minutes. Graceful exit at 40 minutes for an 8 minute buffer. Each training batch has a long running time.
                 if time.time() >= 60 * 40 + time_begin:
                     # Save weights, architecture, training configuration, and optimization state.
@@ -209,20 +216,13 @@ def main():
                     write_temp_file(tempfile, e, b)
                     # Exit.
                     return
-                # Load a batch of semantic layouts.
-                data = load_data(args.semantic, b, b + args.batchsize, height, width, 1)
-                # Load a batch of ground truth images.
-                raw_labels = load_data(args.truth, b, b + args.batchsize, height, width, 3)
-                # Use VGG19 to produce the labels from ground truth images.
-                labels = vgg.predict(raw_labels)
                 # Train a batch.
                 training_model.train_on_batch(x=data, y=labels)
-                # Increment the sample counter by the batch size.
-                b += args.batchsize
-            # When the current epoch is finished, set the sample counter to zero.
-            b = 0
-            # Increment the epoch counter.
-            e += 1
+                # Increment the epoch counter.
+                e += 1
+            e = 0
+            # Increment the sample counter by the batch size.
+            b += args.batchsize
         # When all the epochs finished running, save the model.
         training_model.save(args.save)
         # Remove the epoch/sample counter file since it completed the requested number of epochs.
