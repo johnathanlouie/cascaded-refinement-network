@@ -1,8 +1,5 @@
-This is an implementation of the convolutional neural network described in
-["Photographic Image Synthesis with Cascaded Refinement Networks"](http://cqf.io/papers/Photographic_Image_Synthesis_ICCV2017.pdf)
-by Qifeng Chen and Vladlen Koltun. There are some differences between 
-[their implementation](https://github.com/CQFIO/PhotographicImageSynthesis) 
-and this one. You may find more information at their [website](http://cqf.io/ImageSynthesis/).
+# Cascaded Refinement Networks
+It synthesizes photorealistic images without a generative adversarial network. This is an implementation of the convolutional neural network described in ["Photographic Image Synthesis with Cascaded Refinement Networks"](http://cqf.io/papers/Photographic_Image_Synthesis_ICCV2017.pdf) by Qifeng Chen and Vladlen Koltun. There are some differences between [their implementation](https://github.com/CQFIO/PhotographicImageSynthesis) and this one. You may find more information at their [website](http://cqf.io/ImageSynthesis/).
 
 # Required Python Libraries
 * Tensorflow
