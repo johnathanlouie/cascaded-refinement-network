@@ -12,7 +12,7 @@ def normalize_crn_output(x):
 
 def append_layer(x, fnum, conv, bn):
     """Each module has a 3x3 convolutional layer with LReLU for activation followed by batch normalization."""
-    x = Conv2D(filters=fnum, kernel_size=3, padding="same", name=conv)(x)
+    x = Conv2D(filters=fnum, kernel_size=3, padding='same', name=conv)(x)
     x = LeakyReLU(alpha=0.2)(x)
     x = BatchNormalization(name=bn)(x)
     return x
@@ -43,18 +43,18 @@ def append_module(prev, sem, mnum, fnum):
 
 def crn1024():
     """Build the Cascaded Refinement Network."""
-    minput = Input(shape=(1024, 2048, 1), name="crn_input")
+    minput = Input(shape=(1024, 2048, 1), name='crn_input')
 
     # Downsample the semantic layout in advance.
     dn8 = minput
-    dn7 = MaxPooling2D(pool_size=2, strides=2, name="pool7")(dn8)
-    dn6 = MaxPooling2D(pool_size=2, strides=2, name="pool6")(dn7)
-    dn5 = MaxPooling2D(pool_size=2, strides=2, name="pool5")(dn6)
-    dn4 = MaxPooling2D(pool_size=2, strides=2, name="pool4")(dn5)
-    dn3 = MaxPooling2D(pool_size=2, strides=2, name="pool3")(dn4)
-    dn2 = MaxPooling2D(pool_size=2, strides=2, name="pool2")(dn3)
-    dn1 = MaxPooling2D(pool_size=2, strides=2, name="pool1")(dn2)
-    dn0 = MaxPooling2D(pool_size=2, strides=2, name="pool0")(dn1)
+    dn7 = MaxPooling2D(pool_size=2, strides=2, name='pool7')(dn8)
+    dn6 = MaxPooling2D(pool_size=2, strides=2, name='pool6')(dn7)
+    dn5 = MaxPooling2D(pool_size=2, strides=2, name='pool5')(dn6)
+    dn4 = MaxPooling2D(pool_size=2, strides=2, name='pool4')(dn5)
+    dn3 = MaxPooling2D(pool_size=2, strides=2, name='pool3')(dn4)
+    dn2 = MaxPooling2D(pool_size=2, strides=2, name='pool2')(dn3)
+    dn1 = MaxPooling2D(pool_size=2, strides=2, name='pool1')(dn2)
+    dn0 = MaxPooling2D(pool_size=2, strides=2, name='pool0')(dn1)
 
     # Each module doubles the resolution and has progressively fewer filters.
     x = append_module(None, dn0, 0, 1024)
@@ -71,24 +71,24 @@ def crn1024():
     x = Conv2D(filters=3, kernel_size=1, activation=None)(x)
 
     # The output is very dark, so scale the intensity.
-    moutput = Lambda(normalize_crn_output, name="crn_output")(x)
+    moutput = Lambda(normalize_crn_output, name='crn_output')(x)
     model = Model(inputs=minput, outputs=moutput)
     return model
 
 
 def crn512():
     """Build the Cascaded Refinement Network."""
-    minput = Input(shape=(512, 1024, 1), name="crn_input")
+    minput = Input(shape=(512, 1024, 1), name='crn_input')
 
     # Downsample the semantic layout in advance.
     dn7 = minput
-    dn6 = MaxPooling2D(pool_size=2, strides=2, name="pool6")(dn7)
-    dn5 = MaxPooling2D(pool_size=2, strides=2, name="pool5")(dn6)
-    dn4 = MaxPooling2D(pool_size=2, strides=2, name="pool4")(dn5)
-    dn3 = MaxPooling2D(pool_size=2, strides=2, name="pool3")(dn4)
-    dn2 = MaxPooling2D(pool_size=2, strides=2, name="pool2")(dn3)
-    dn1 = MaxPooling2D(pool_size=2, strides=2, name="pool1")(dn2)
-    dn0 = MaxPooling2D(pool_size=2, strides=2, name="pool0")(dn1)
+    dn6 = MaxPooling2D(pool_size=2, strides=2, name='pool6')(dn7)
+    dn5 = MaxPooling2D(pool_size=2, strides=2, name='pool5')(dn6)
+    dn4 = MaxPooling2D(pool_size=2, strides=2, name='pool4')(dn5)
+    dn3 = MaxPooling2D(pool_size=2, strides=2, name='pool3')(dn4)
+    dn2 = MaxPooling2D(pool_size=2, strides=2, name='pool2')(dn3)
+    dn1 = MaxPooling2D(pool_size=2, strides=2, name='pool1')(dn2)
+    dn0 = MaxPooling2D(pool_size=2, strides=2, name='pool0')(dn1)
 
     # Each module doubles the resolution and has progressively fewer filters.
     x = append_module(None, dn0, 0, 1024)
@@ -104,23 +104,23 @@ def crn512():
     x = Conv2D(filters=3, kernel_size=1, activation=None)(x)
 
     # The output is very dark, so scale the intensity.
-    moutput = Lambda(normalize_crn_output, name="crn_output")(x)
+    moutput = Lambda(normalize_crn_output, name='crn_output')(x)
     model = Model(inputs=minput, outputs=moutput)
     return model
 
 
 def crn256():
     """Build the Cascaded Refinement Network."""
-    minput = Input(shape=(256, 512, 1), name="crn_input")
+    minput = Input(shape=(256, 512, 1), name='crn_input')
 
     # Downsample the semantic layout in advance.
     dn6 = minput
-    dn5 = MaxPooling2D(pool_size=2, strides=2, name="pool5")(dn6)
-    dn4 = MaxPooling2D(pool_size=2, strides=2, name="pool4")(dn5)
-    dn3 = MaxPooling2D(pool_size=2, strides=2, name="pool3")(dn4)
-    dn2 = MaxPooling2D(pool_size=2, strides=2, name="pool2")(dn3)
-    dn1 = MaxPooling2D(pool_size=2, strides=2, name="pool1")(dn2)
-    dn0 = MaxPooling2D(pool_size=2, strides=2, name="pool0")(dn1)
+    dn5 = MaxPooling2D(pool_size=2, strides=2, name='pool5')(dn6)
+    dn4 = MaxPooling2D(pool_size=2, strides=2, name='pool4')(dn5)
+    dn3 = MaxPooling2D(pool_size=2, strides=2, name='pool3')(dn4)
+    dn2 = MaxPooling2D(pool_size=2, strides=2, name='pool2')(dn3)
+    dn1 = MaxPooling2D(pool_size=2, strides=2, name='pool1')(dn2)
+    dn0 = MaxPooling2D(pool_size=2, strides=2, name='pool0')(dn1)
 
     # Each module doubles the resolution and has progressively fewer filters.
     x = append_module(None, dn0, 0, 1024)
@@ -135,23 +135,23 @@ def crn256():
     x = Conv2D(filters=3, kernel_size=1, activation=None)(x)
 
     # The output is very dark, so scale the intensity.
-    moutput = Lambda(normalize_crn_output, name="crn_output")(x)
+    moutput = Lambda(normalize_crn_output, name='crn_output')(x)
     model = Model(inputs=minput, outputs=moutput)
     return model
 
 
 def vgg19(height, width):
     """Build a pretrained VGG19 for perceptual loss."""
-    vgg = VGG19(include_top=False, weights="imagenet", input_shape=(height, width, 3))
+    vgg = VGG19(include_top=False, weights='imagenet', input_shape=(height, width, 3))
 
     # Only the input and the second convolutional layer from each block is used in the loss function.
     vgg2 = Model(inputs=vgg.input, outputs=[
             vgg.input,
-            vgg.get_layer("block1_conv2").output,
-            vgg.get_layer("block2_conv2").output,
-            vgg.get_layer("block3_conv2").output,
-            vgg.get_layer("block4_conv2").output,
-            vgg.get_layer("block5_conv2").output
+            vgg.get_layer('block1_conv2').output,
+            vgg.get_layer('block2_conv2').output,
+            vgg.get_layer('block3_conv2').output,
+            vgg.get_layer('block4_conv2').output,
+            vgg.get_layer('block5_conv2').output
             ])
 
     # Ensure VGG19 cannot be trained.
@@ -169,12 +169,12 @@ def combine_crn_vgg19(crn, vgg):
     model.compile(
             optimizer=Adam(lr=0.0001),
             loss=[
-                    "mean_absolute_error",
-                    "mean_absolute_error",
-                    "mean_absolute_error",
-                    "mean_absolute_error",
-                    "mean_absolute_error",
-                    "mean_absolute_error"
+                    'mean_absolute_error',
+                    'mean_absolute_error',
+                    'mean_absolute_error',
+                    'mean_absolute_error',
+                    'mean_absolute_error',
+                    'mean_absolute_error'
             ],
             loss_weights=[1.0, 1/2.6, 1/4.8, 1/3.7, 1/5.6, 10.0/1.5]
     )
@@ -183,4 +183,4 @@ def combine_crn_vgg19(crn, vgg):
 
 def extract_crn(model):
     """Extract CRN from the CRN+VGG19 save file."""
-    return Model(inputs=model.input, outputs=model.get_layer("crn_output").output)
+    return Model(inputs=model.input, outputs=model.get_layer('crn_output').output)
